@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+    
+<head>
+  <title>Edupath AI - AI Coach</title>
+  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  <style>
+    /* Khung giao diện Chat cơ bản */
+    .chat-container {
+      max-width: 600px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+    .chat-box {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      max-width: 80%;
+    }
+    .user-msg {
+      background-color: #d1e7dd;
+      margin-left: auto;
+      text-align: right;
+    }
+    .bot-msg {
+      background-color: #e2e3e5;
+      margin-right: auto;
+    }
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 8px;
+    }
+    .input-area button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+    
+<body>
+
+  <h1>Edupath AI</h1>
+  <h2>AI Coach</h2>
+  <p>Trợ lý AI cá nhân hóa lộ trình ngoại khóa và tự động chuẩn hóa Portfolio ứng tuyển đại học/du học</p>
+
+  <!-- Khung Chat AI Coach -->
+  <div class="chat-container">
+    <div id="chatBox" class="chat-box">
+      <div class="message bot-msg">Xin chào! Tôi là AI Coach. Tôi có thể giúp gì cho bạn hôm nay?</div>
+    </div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Nhập câu hỏi của bạn...">
+      <button onclick="sendMessage()">Gửi</button>
+    </div>
+  </div>
+
+  <br>
+  <a href="page1.html" target="_self">Trang chủ</a>
+  <a href="page2.html" target="_self">Quiz định hướng</a>
+  <a href="page3.html" target="_self">Khám phá</a>
+  <a href="page4.html" target="_self">Lộ trình</a>
+  <a href="page5.html" target="_self">Hoạt động</a>
+  <a href="page6.html" target="_self">Portfolio</a>
+  <a href="page7.html" target="_self">AI Coach</a>
+<!-- Đoạn mã xử lý gọi API backend -->
+<script>
+  // 1. Đã thêm /api/chat vào cuối đường dẫn Render
+  const BACKEND_URL = "https://chinsiu1412-github-io.onrender.com/api/chat";
+
+  async function sendMessage() {
+    const inputField = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+    const userMessage = inputField.value.trim();
+
+    if (!userMessage) return;
+
+    // Hiển thị tin nhắn người dùng
+    chatBox.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
+    inputField.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Hiển thị dòng "Đang suy nghĩ..."
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "message bot-msg";
+    loadingDiv.id = "loading";
+    loadingDiv.innerText = "AI Coach đang suy nghĩ...";
+    chatBox.appendChild(loadingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+      // Gọi API sang Backend Render
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: userMessage })
+      });
+
+      const data = await response.json();
+
+      // Bỏ dòng loading
+      document.getElementById("loading").remove();
+
+      if (data.reply) {
+        chatBox.innerHTML += `<div class="message bot-msg">${data.reply}</div>`;
+      } else {
+        chatBox.innerHTML += `<div class="message bot-msg">Lỗi: Không nhận được phản hồi từ AI.</div>`;
+      }
+    } catch (error) { // Đã đóng ngoặc nhọn khối try đúng chuẩn
+      const loadingEl = document.getElementById("loading");
+      if (loadingEl) loadingEl.remove();
+      
+      chatBox.innerHTML += `<div class="message bot-msg">Lỗi kết nối Server: ${error.message}</div>`;
+    }
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+</script>
+    </body>
+        </html>
+  
