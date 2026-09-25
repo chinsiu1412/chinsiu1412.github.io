@@ -91,7 +91,3 @@ body {
   font-weight: 600;
   text-decoration: none;
 }
-
-.card a:hover {
-  text-decoration: underline;
-}
