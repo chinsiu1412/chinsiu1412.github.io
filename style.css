@@ -1,31 +1,97 @@
-body {
-    background-image:;
-    font-family: ;
+/* --- BIẾN MÀU SẮC (THEME) --- */
+:root {
+  --primary-color: #003366;       /* Xanh dương đậm */
+  --secondary-color: #007bff;     /* Xanh dương sáng */
+  --accent-color: #00a8e8;        /* Xanh nhạt highlight */
+  --bg-light: #f8fafc;            /* Nền xanh xám rất nhẹ */
+  --bg-white: #ffffff;            /* Nền trắng */
+  --text-color: #1e293b;          /* Màu chữ tối */
+  --text-muted: #64748b;          /* Màu chữ phụ */
+}
 
+/* --- TỔNG THỂ --- */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-white);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
 }
-h1 {
-    color:;
-    text-align:;
-    font-size:;
-    padding:;
+
+/* --- HEADER & HERO SECTION --- */
+.hero {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--bg-white);
+  padding: 80px 20px;
+  text-align: center;
 }
-h2 {
-    color:;
-    text-align:;
-    font-size:;
-    padding:;
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
 }
-p {
-    color:;
-    text-align:;
-    font-size:;
-    padding:;
-    margin:;
+
+.btn-primary {
+  background-color: var(--bg-white);
+  color: var(--primary-color);
+  padding: 12px 28px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
-a {
-    displaly: ;
-    color:;
-    text-align:;
-    font-size:;
-    text-decoration: none;
+
+.btn-primary:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-white);
+}
+
+/* --- THẺ GRID (CARDS SECTION - Giống Athabasca) --- */
+.features-section {
+  background-color: var(--bg-light);
+  padding: 60px 20px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--bg-white);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 51, 102, 0.15);
+}
+
+.card h2 {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  margin-top: 0;
+}
+
+.card p {
+  color: var(--text-muted);
+}
+
+.card a {
+  color: var(--secondary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
 }
