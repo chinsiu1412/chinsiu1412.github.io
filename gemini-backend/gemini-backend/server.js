@@ -7,6 +7,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 
+/* Cấu hình Trust Proxy (BẮT BUỘC khi deploy trên Render/Heroku để rateLimit chạy đúng) */
+app.set('trust proxy', 1);
+
 /* Cấu hình Middleware */
 app.use(cors({
   origin: ["https://chinsiu1412.github.io"],

@@ -167,6 +167,19 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
+  // Tạo hoặc lấy sessionId hiện tại từ sessionStorage
+if (!sessionStorage.getItem('chatSessionId')) {
+  sessionStorage.setItem('chatSessionId', crypto.randomUUID());
+}
+const sessionId = sessionStorage.getItem('chatSessionId');
+
+// Request tới Backend
+fetch('https://chinsiu1412-github-io.onrender.com/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: userMessage, sessionId: sessionId })
+});
+
 </script>
 
 <footer class="site-footer">
