@@ -17,7 +17,7 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash"});
+const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite"});
 
 /* 1. Endpoint xử lý tin nhắn Chatbot */
 app.post('/api/chat', async (req, res) => {

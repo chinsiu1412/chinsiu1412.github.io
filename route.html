@@ -13,16 +13,46 @@
     <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Edupath AI</h1>
-        <h2>Lộ trình</h2>
-        <p>Lộ trình hoạt động ngoại khóa của bạn
-        </p>
-        <a href="index.html" target="_self">Trang chủ</a>
-        <a href="quiz.html" target="_self">Quiz định hướng</a>
-        <a href="discovery.html" target="_self">Khám phá</a>
-        <a href="route.html" target="_self">Lộ trình</a>
-        <a href="activities.html" target="_self">Hoạt động</a>
-        <a href="portfolio.html" target="_self">Portfolio</a>
-        <a href="coach.html" target="_self">AI Coach</a>
+        <a href="#main-content" class="skip-link">Bỏ qua đến nội dung chính</a>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">Edupath AI</a>
+
+            <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">
+                <span class="hamburger"></span>
+            </button>
+
+            <nav id="main-nav" class="main-nav">
+
+                <ul>
+                   <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="quiz.html">Quiz định hướng</a></li>
+                    <li><a href="coach.html">AI Coach</a></li>
+                    <li><a href="discovery.html">Khám phá</a></li>
+                    <li><a href="activities.html">Hoạt động</a></li>
+                    <li><a href="route.html" class="active">Lộ trình</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                </ul>
+
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Lộ trình</h1>
+                <p>Lộ trình cá nhân hóa cho các hoạt động ngoại khóa của bạn dựa trên quiz định hướng cùng AI Coach của chúng tôi</p>
+                <a href="portfolio.html" class="btn btn-primary">Xây dựng hồ sơ năng lực của bạn tại đây nhé</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2026 Edupath AI</p>
+    </footer>
+
+    <script src="script.js"></script>
     </body>
 </html>

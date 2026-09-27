@@ -1,5 +1,5 @@
-/*Toogle menu mobile*/
-/*Toogle dropdown submenu*/
+/*Toggle menu mobile*/
+/*Toggle dropdown submenu*/
 /*Smooth scroll*/
 /*Sticky header*/
 /*Animation on scroll*/
