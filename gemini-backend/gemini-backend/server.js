@@ -2,12 +2,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 
 /* Cấu hình Middleware */
-app.use(cors());
+app.use(cors({
+  origin: ["https://chinsiu1412.github.io"],
+}));
 app.use(express.json());
 
 /* Kiểm tra bảo mật và kết nối */
@@ -17,13 +20,24 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite"});
+const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
+
+/* Giới hạn 10 request/phút/IP cho endpoint chat, tránh cháy quota free tier */
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { reply: "Bạn đang gửi quá nhanh, vui lòng chờ một chút." }
+});
 
 /* 1. Endpoint xử lý tin nhắn Chatbot */
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', chatLimiter, async (req, res) => {
   const { message } = req.body;
-  if (!message) {
-    return res.status(400).json({ error: 'Nội dung tin nhắn không được để trống' });
+
+  if (!message || typeof message !== 'string') {
+    return res.status(400).json({ error: 'Nội dung tin nhắn không hợp lệ' });
+  }
+  if (message.length > 2000) {
+    return res.status(400).json({ error: 'Tin nhắn quá dài (tối đa 2000 ký tự)' });
   }
 
   // Cơ chế tự động thử lại tối đa 2 lần khi Google quá tải
@@ -40,14 +54,21 @@ app.post('/api/chat', async (req, res) => {
       console.error(`Lần thử ${attempts} thất bại:`, error.message);
 
       if (attempts >= maxAttempts) {
+        // Log đầy đủ chi tiết lỗi ở phía server (chỉ mình bạn nhìn thấy, trong terminal/log file)
+        console.error("Lỗi chi tiết khi gọi Gemini API:", error);
+
         if (error.status === 503 || (error.message && error.message.includes('503'))) {
-          return res.status(503).json({ 
-            reply: "Hệ thống AI của Google hiện đang quá tải. Bạn vui lòng bấm Gửi lại sau vài giây nhé!" 
+          return res.status(503).json({
+            reply: "Hệ thống AI của Edupath AI hiện đang quá tải. Bạn vui lòng bấm Gửi lại sau vài giây nhé!"
           });
         }
-        return res.status(500).json({ reply: "Đã xảy ra lỗi khi kết nối với AI: " + error.message });
+
+        // Chỉ trả message CHUNG cho client, không lộ error.message ra ngoài
+        return res.status(500).json({
+          reply: "Đã xảy ra lỗi khi kết nối với AI. Vui lòng thử lại sau."
+        });
       }
-      
+
       // Chờ 1 giây trước khi thử lại
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
@@ -68,7 +89,8 @@ app.get('/api/models', async (req, res) => {
 
     res.json({ supportedModels });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Lỗi khi lấy danh sách model:", error);
+    res.status(500).json({ error: "Không thể lấy danh sách model." });
   }
 });
 
