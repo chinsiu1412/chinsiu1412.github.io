@@ -1,93 +1,494 @@
-/* --- BIẾN MÀU SẮC (THEME) --- */
+/* Cấu trúc trang web 
+Header sticky:
+Hero section:
+Danh sách điều hướng:
+Các section có nội dung lặp lại:
+Khối trích dẫn:
+Khối CTA (call to action) 
+Khối trích dẫ:
+Head footer + footer*/
+
+/*Cấu trúc CSS
+Thiết lập bảng màu (CSS variables)*/
+/*Bố cục và spacing*/
+/*Header*/
+/*Card component*/
+/*Nút CTA*/
+/*Section xen kẽ màu nền*/
+/*Typography*/
+/*Responsive*/
+
+
+/* ==========================================================================
+   EDUPATH AI — style.css
+   Tone: Trắng - Xanh dương
+   Font: Be Vietnam Pro (nhớ nhúng qua Google Fonts trong <head> mỗi trang)
+   ========================================================================== */
+
+/* ---------- 1. Reset cơ bản ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; margin: 0; padding: 0; }
+a { text-decoration: none; color: inherit; }
+button { font: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+
+/* ---------- 2. Design tokens (biến màu / khoảng cách) ---------- */
 :root {
-  --primary-color: #003366;       /* Xanh dương đậm */
-  --secondary-color: #007bff;     /* Xanh dương sáng */
-  --accent-color: #00a8e8;        /* Xanh nhạt highlight */
-  --bg-light: #f8fafc;            /* Nền xanh xám rất nhẹ */
-  --bg-white: #ffffff;            /* Nền trắng */
-  --text-color: #1e293b;          /* Màu chữ tối */
-  --text-muted: #64748b;          /* Màu chữ phụ */
+  /* Màu nền */
+  --color-bg: #ffffff;
+  --color-surface: #f3f7ff;      /* nền xen kẽ giữa các section */
+
+  /* Chữ */
+  --color-ink: #10203d;          /* xanh navy đậm thay cho đen thuần */
+  --color-ink-muted: #566379;
+
+  /* Xanh dương chủ đạo */
+  --color-primary: #155eef;
+  --color-primary-dark: #0d3fae;
+  --color-primary-tint: #dce8ff;
+
+  /* Viền / đường kẻ */
+  --color-border: #dce4f0;
+
+  /* Khoảng cách */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 64px;
+  --space-6: 96px;
+
+  /* Bo góc */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+
+  /* Container */
+  --container-width: 1160px;
 }
 
-/* --- TỔNG THỂ --- */
+/* ---------- 3. Typography ---------- */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--bg-white);
-  color: var(--text-color);
-  margin: 0;
-  padding: 0;
+  font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+  color: var(--color-ink);
+  background: var(--color-bg);
   line-height: 1.6;
+  font-size: 16px;
 }
 
-/* --- HEADER & HERO SECTION --- */
+h1, h2, h3 {
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 var(--space-2);
+  color: var(--color-ink);
+}
+
+h1 { font-size: clamp(32px, 5vw, 48px); }
+h2 { font-size: clamp(24px, 3.5vw, 32px); }
+h3 { font-size: 19px; font-weight: 600; }
+
+p { margin: 0 0 var(--space-2); max-width: 62ch; color: var(--color-ink-muted); }
+
+/* ---------- 4. Bố cục dùng chung ---------- */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+.section {
+  padding: var(--space-5) 0;
+}
+
+.section--tint {
+  background: var(--color-surface);
+}
+
+/* ---------- 5. Skip link (accessibility) ---------- */
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 0;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 12px 20px;
+  z-index: 1000;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0; }
+
+/* ---------- 6. Header / Nav ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 2px 12px rgba(16, 32, 61, 0.06);
+}
+
+.header-inner {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--color-ink);
+}
+
+.main-nav ul {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.main-nav a {
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.main-nav a:hover,
+.main-nav a:focus-visible {
+  color: var(--color-primary);
+}
+
+.main-nav a.active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Nút hamburger — ẩn ở desktop */
+.menu-toggle {
+  display: none;
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.hamburger,
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: var(--color-ink);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.hamburger { top: 15px; }
+.hamburger::before { top: -8px; }
+.hamburger::after { top: 8px; }
+
+/* Trạng thái menu mở trên mobile (JS thêm class .nav-open vào body) */
+.nav-open .hamburger { background: transparent; }
+.nav-open .hamburger::before { transform: translateY(8px) rotate(45deg); }
+.nav-open .hamburger::after { transform: translateY(-8px) rotate(-45deg); }
+
+/* ---------- 7. Hero ---------- */
 .hero {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: var(--bg-white);
-  padding: 80px 20px;
-  text-align: center;
+  padding: var(--space-6) 0 var(--space-5);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-4);
+  align-items: center;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
+.hero-content p { font-size: 18px; }
+
+/* ---- Đường lộ trình (path) — hình ảnh đặc trưng của hero, vẽ hoàn toàn bằng CSS, KHÔNG cần ảnh ---- */
+.hero-path {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.path-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  position: relative;
+  padding-bottom: var(--space-3);
+}
+
+.path-step:last-child { padding-bottom: 0; }
+
+/* đường nối dọc giữa các chấm */
+.path-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -8px;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.path-step .step-dot {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 0 0 2px var(--color-primary-tint);
+  animation: dot-in 0.5s ease backwards;
+}
+
+/* hiệu ứng xuất hiện tuần tự — MỘT khoảnh khắc chuyển động duy nhất khi tải trang */
+.path-step:nth-child(1) .step-dot { animation-delay: 0.05s; }
+.path-step:nth-child(2) .step-dot { animation-delay: 0.15s; }
+.path-step:nth-child(3) .step-dot { animation-delay: 0.25s; }
+.path-step:nth-child(4) .step-dot { animation-delay: 0.35s; }
+.path-step:nth-child(5) .step-dot { animation-delay: 0.45s; }
+.path-step:nth-child(6) .step-dot { animation-delay: 0.55s; }
+
+@keyframes dot-in {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.path-step span.step-label {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* ---------- 8. Nút (buttons) ---------- */
+.btn {
+  display: inline-block;
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-primary {
-  background-color: var(--bg-white);
-  color: var(--primary-color);
-  padding: 12px 28px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-block;
-  transition: all 0.3s ease;
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-primary:hover,
+.btn-primary:focus-visible { background: var(--color-primary-dark); }
+
+.btn-outline {
+  border: 1.5px solid var(--color-border);
+  color: var(--color-ink);
+}
+.btn-outline:hover,
+.btn-outline:focus-visible { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* ---------- 9. Danh sách điều hướng nhanh (quick links) ---------- */
+.quick-links ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  counter-reset: step;
 }
 
-.btn-primary:hover {
-  background-color: var(--accent-color);
-  color: var(--bg-white);
+.quick-links li {
+  counter-increment: step;
 }
 
-/* --- THẺ GRID (CARDS SECTION - Giống Athabasca) --- */
-.features-section {
-  background-color: var(--bg-light);
-  padding: 60px 20px;
+.quick-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-weight: 500;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
+
+.quick-links a::before {
+  content: counter(step);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick-links a:hover,
+.quick-links a:focus-visible {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+/* ---------- 10. Section nội dung + Card grid ---------- */
+.content-section .section-head {
+  max-width: 640px;
+  margin-bottom: var(--space-4);
+}
+
+.link-more {
+  font-weight: 600;
+  color: var(--color-primary);
+  border-bottom: 1.5px solid var(--color-primary-tint);
+}
+.link-more:hover,
+.link-more:focus-visible { border-bottom-color: var(--color-primary); }
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 25px;
-  max-width: 1200px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-3);
 }
 
 .card {
-  background: var(--bg-white);
-  border-top: 4px solid var(--primary-color);
-  border-radius: 8px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  transition: border-color 0.15s ease;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 51, 102, 0.15);
+.card:hover,
+.card:focus-within {
+  border-color: var(--color-primary);
 }
 
-.card h2 {
-  color: var(--primary-color);
-  font-size: 1.4rem;
-  margin-top: 0;
+/* ẢNH CẦN THAY: icon minh họa cho mỗi card (SVG, 40x40px, đơn sắc xanh dương) */
+.card-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-tint);
+  /* Nếu chưa có icon SVG, có thể tạm hiển thị chữ cái đầu bằng thuộc tính data-label trong HTML,
+     ví dụ: <div class="card-icon" data-label="Q"></div> */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-dark);
+  font-weight: 700;
 }
+.card-icon[data-label]::before { content: attr(data-label); }
 
-.card p {
-  color: var(--text-muted);
+.card p { margin-bottom: var(--space-1); }
+
+/* ---------- 11. Khối trích dẫn / testimonial ---------- */
+.quote-block {
+  border-left: 3px solid var(--color-primary);
+  padding-left: var(--space-3);
+  max-width: 680px;
 }
-
-.card a {
-  color: var(--secondary-color);
+.quote-block blockquote {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2);
+}
+.quote-block cite {
+  font-style: normal;
   font-weight: 600;
-  text-decoration: none;
+  color: var(--color-ink-muted);
+}
+
+/* ---------- 12. Khối CTA phụ ---------- */
+.cta-banner {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.cta-banner h2,
+.cta-banner p { color: #fff; }
+.cta-banner .btn-primary { background: #fff; color: var(--color-primary-dark); }
+.cta-banner .btn-primary:hover { background: var(--color-primary-tint); }
+
+/* ẢNH CẦN THAY (tuỳ chọn): nếu muốn banner có ảnh minh hoạ nền thay vì màu phẳng,
+   thêm background-image ở đây, ví dụ:
+   .cta-banner { background: url('assets/cta-bg.jpg') center/cover; } */
+
+/* ---------- 13. Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-3) 0;
+  margin-top: var(--space-5);
+  text-align: center;
+  color: var(--color-ink-muted);
+  font-size: 14px;
+}
+
+/* ---------- 14. Trạng thái focus bàn phím (accessibility) ---------- */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---------- 15. Responsive ---------- */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: var(--space-4);
+  }
+
+  .menu-toggle { display: block; }
+
+  .main-nav {
+    position: fixed;
+    top: 61px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-bg);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+  }
+
+  body.nav-open .main-nav {
+    transform: translateX(0);
+  }
+
+  .main-nav ul {
+    flex-direction: column;
+    padding: var(--space-3);
+    gap: var(--space-1);
+  }
+
+  .main-nav a {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+/* ---------- 16. Tôn trọng người dùng tắt hiệu ứng chuyển động ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
