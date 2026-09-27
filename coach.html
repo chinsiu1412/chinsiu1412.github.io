@@ -115,9 +115,19 @@
     
 <!-- Đoạn mã xử lý gọi API backend -->
 <script>
-  // 1. Đã thêm /api/chat vào cuối đường dẫn Render
   const BACKEND_URL = "https://chinsiu1412-github-io.onrender.com/api/chat";
 
+  // 1. Khởi tạo/Lấy sessionId duy nhất cho mỗi phiên duyệt web
+  function getSessionId() {
+    let id = sessionStorage.getItem('chatSessionId');
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem('chatSessionId', id);
+    }
+    return id;
+  }
+
+  // 2. Hàm gửi tin nhắn
   async function sendMessage() {
     const inputField = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
@@ -126,11 +136,11 @@
     if (!userMessage) return;
 
     // Hiển thị tin nhắn người dùng
-    chatBox.innerHTML += `<div class="message user-msg">${userMessage}</div>`;
+    chatBox.innerHTML += `<div class="message user-msg">${escapeHtml(userMessage)}</div>`;
     inputField.value = "";
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Hiển thị dòng "Đang suy nghĩ..."
+    // Hiển thị trạng thái "AI Coach đang suy nghĩ..."
     const loadingDiv = document.createElement("div");
     loadingDiv.className = "message bot-msg";
     loadingDiv.id = "loading";
@@ -139,47 +149,53 @@
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-      // Gọi API sang Backend Render
+      // Gọi API sang Backend Render (Gửi kèm cả message VÀ sessionId)
       const response = await fetch(BACKEND_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: userMessage })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          message: userMessage,
+          sessionId: getSessionId()
+        })
       });
 
       const data = await response.json();
 
-      // Bỏ dòng loading
-      document.getElementById("loading").remove();
-
-      if (data.reply) {
-        chatBox.innerHTML += `<div class="message bot-msg">${data.reply}</div>`;
-      } else {
-        chatBox.innerHTML += `<div class="message bot-msg">Lỗi: Không nhận được phản hồi từ AI.</div>`;
-      }
-    } catch (error) { // Đã đóng ngoặc nhọn khối try đúng chuẩn
+      // Xóa dòng loading
       const loadingEl = document.getElementById("loading");
       if (loadingEl) loadingEl.remove();
-      
-      chatBox.innerHTML += `<div class="message bot-msg">Lỗi kết nối Server: ${error.message}</div>`;
+
+      if (data.reply) {
+        chatBox.innerHTML += `<div class="message bot-msg">${escapeHtml(data.reply)}</div>`;
+      } else {
+        // Hiển thị thông báo lỗi chi tiết từ backend nếu có
+        const errorMsg = data.error || "Không nhận được phản hồi từ AI.";
+        chatBox.innerHTML += `<div class="message bot-msg">Lỗi: ${escapeHtml(errorMsg)}</div>`;
+      }
+    } catch (error) {
+      const loadingEl = document.getElementById("loading");
+      if (loadingEl) loadingEl.remove();
+      chatBox.innerHTML += `<div class="message bot-msg">Lỗi kết nối Server: ${escapeHtml(error.message)}</div>`;
     }
+
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // Tạo hoặc lấy sessionId hiện tại từ sessionStorage
-if (!sessionStorage.getItem('chatSessionId')) {
-  sessionStorage.setItem('chatSessionId', crypto.randomUUID());
-}
-const sessionId = sessionStorage.getItem('chatSessionId');
+  // Hàm phụ hỗ trợ chống lỗi XSS bảo mật
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
-// Request tới Backend
-fetch('https://chinsiu1412-github-io.onrender.com/api/chat', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ message: userMessage, sessionId: sessionId })
-});
-
+  // Thêm sự kiện bấm phím Enter để gửi tin nhắn
+  document.getElementById("userInput")?.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
 </script>
 
 <footer class="site-footer">
