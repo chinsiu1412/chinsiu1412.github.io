@@ -167,22 +167,6 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // Tạo 1 sessionId duy nhất cho mỗi lần người dùng mở tab/trang, lưu tạm trong sessionStorage
-// (dùng sessionStorage chứ không phải localStorage, để mỗi tab/phiên truy cập là 1 cuộc hội thoại riêng)
-if (!sessionStorage.getItem('chatSessionId')) {
-  sessionStorage.setItem('chatSessionId', crypto.randomUUID());
-}
-const sessionId = sessionStorage.getItem('chatSessionId');
-
-async function sendMessage(message) {
-  const response = await fetch('https://<backend-url-cua-ban>/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, sessionId }) // nhớ gửi kèm sessionId
-  });
-  return response.json();
-}
-
 </script>
 
 <footer class="site-footer">

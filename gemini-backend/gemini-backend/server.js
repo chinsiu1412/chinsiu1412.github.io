@@ -29,9 +29,39 @@ const chatLimiter = rateLimit({
   message: { reply: "Bạn đang gửi quá nhanh, vui lòng chờ một chút." }
 });
 
+/* ---------------------------------------------------------------------
+   Bộ nhớ hội thoại theo phiên (session), lưu tạm trong RAM — không cần
+   database, phù hợp cho prototype. Mỗi sessionId giữ 1 đối tượng "chat"
+   của Gemini SDK, đối tượng này tự quản lý lịch sử hội thoại bên trong.
+   Lưu ý: dữ liệu sẽ mất khi restart server (chấp nhận được với prototype).
+--------------------------------------------------------------------- */
+const conversations = new Map(); // sessionId -> { chat, lastActive }
+const SESSION_TTL_MS = 30 * 60 * 1000; // hết hạn sau 30 phút không hoạt động
+
+function getOrCreateChat(sessionId) {
+  const existing = conversations.get(sessionId);
+  if (existing) {
+    existing.lastActive = Date.now();
+    return existing.chat;
+  }
+  const chat = model.startChat({ history: [] });
+  conversations.set(sessionId, { chat, lastActive: Date.now() });
+  return chat;
+}
+
+// Dọn các session không hoạt động lâu, tránh rò rỉ bộ nhớ khi chạy demo dài
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, data] of conversations.entries()) {
+    if (now - data.lastActive > SESSION_TTL_MS) {
+      conversations.delete(id);
+    }
+  }
+}, 10 * 60 * 1000);
+
 /* 1. Endpoint xử lý tin nhắn Chatbot */
 app.post('/api/chat', chatLimiter, async (req, res) => {
-  const { message } = req.body;
+  const { message, sessionId } = req.body;
 
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Nội dung tin nhắn không hợp lệ' });
@@ -39,6 +69,11 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
   if (message.length > 2000) {
     return res.status(400).json({ error: 'Tin nhắn quá dài (tối đa 2000 ký tự)' });
   }
+  if (!sessionId || typeof sessionId !== 'string') {
+    return res.status(400).json({ error: 'Thiếu sessionId — mỗi phiên chat cần 1 mã định danh riêng' });
+  }
+
+  const chat = getOrCreateChat(sessionId);
 
   // Cơ chế tự động thử lại tối đa 2 lần khi Google quá tải
   let attempts = 0;
@@ -46,7 +81,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
   while (attempts < maxAttempts) {
     try {
-      const result = await model.generateContent(message);
+      const result = await chat.sendMessage(message);
       const reply = result.response.text();
       return res.json({ reply });
     } catch (error) {
